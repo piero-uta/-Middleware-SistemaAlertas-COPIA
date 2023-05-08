@@ -286,8 +286,7 @@ app.get('/alerts/', async function(req,res){
     {$unwind: "$alertAndSender"}
 
   ])  
-  //ultimas 100
-  .sort({date: -1}).limit(100);
+
   const alertsModificated = alerts.map(alert=>{
     return {
       _id: alert._id,
