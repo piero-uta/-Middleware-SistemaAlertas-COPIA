@@ -271,6 +271,8 @@ app.post('/users/save', async function(req,res){
  *    description: Obtiene todas las alerta, cada una con (sender,createdAt, updatedAt)
 */
 app.get('/alerts/', async function(req,res){
+  
+
   const alerts = await Alert.aggregate([
     {
       $lookup: 
@@ -283,7 +285,9 @@ app.get('/alerts/', async function(req,res){
     },
     {$unwind: "$alertAndSender"}
 
-  ])
+  ])  
+  //ultimas 100
+  .sort({date: -1}).limit(100);
   const alertsModificated = alerts.map(alert=>{
     return {
       _id: alert._id,
