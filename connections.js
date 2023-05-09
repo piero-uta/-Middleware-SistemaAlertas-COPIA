@@ -15,7 +15,7 @@ try{
   secundaria = await mongoose.createConnection(process.env.MONGODB2,{useNewUrlParser:true}).asPromise();
   console.log(secundaria)
 
-}catch(err){console.log(err);}
+}catch(err){console.log(err); secundaria = primaria;}
 
 
 
