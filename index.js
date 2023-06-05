@@ -59,7 +59,7 @@ function getDateChile(){
 
 primaria.on('connected',asyncHandler(async function(){
   if(secundariaReady){
-    Promise.all([UserPrimaria.deleteMany({}),TokenPrimaria.deleteMany({}),AlertPrimaria.deleteMany({})])
+    // Promise.all([UserPrimaria.deleteMany({}),TokenPrimaria.deleteMany({}),AlertPrimaria.deleteMany({})])
     Promise.all([copyUsersModelAtoModelB(UserSecundaria,UserPrimaria),copyTokensModelAtoModelB(TokenSecundaria,TokenPrimaria),copyAlertsModelAtoModelB(TokenSecundaria,TokenPrimaria)])
     console.log("copy secundaria to primaria",getDateChile());
   }
@@ -135,7 +135,7 @@ app.use(
 
 cron.schedule('00 * * * * *',()=>{
   if(primariaReady && secundariaReady){
-    Promise.all([UserSecundaria.deleteMany({}),TokenSecundaria.deleteMany({}),AlertSecundaria.deleteMany({})])
+    // Promise.all([UserSecundaria.deleteMany({}),TokenSecundaria.deleteMany({}),AlertSecundaria.deleteMany({})])
     Promise.all([copyUsersModelAtoModelB(UserPrimaria,UserSecundaria),copyTokensModelAtoModelB(TokenPrimaria,TokenSecundaria)],copyAlertsModelAtoModelB(AlertPrimaria,AlertSecundaria));
     console.log('copy primaria to secundaria', getDateChile());
     }
