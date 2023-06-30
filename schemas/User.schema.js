@@ -6,6 +6,4 @@ const userSchema = mongoose.Schema({
   address: String,
   password: String,
 });
-
-
 export default userSchema;

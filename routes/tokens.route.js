@@ -1,24 +1,19 @@
 import express from 'express';
-import mongoose from 'mongoose';
 const tokensRouter = express.Router();
 
 
 tokensRouter.get('/', async function(req,res){
-  const Token = req.datos.Token;
-  const tokens = await Token.find({});
-  res.json(tokens);
+  const db = req.db;
+  res.json(await db.getTokens());
 });
 tokensRouter.get('/one/:token', async function(req,res){
-  const Token = req.datos.Token;
-  const token = await Token.findOne({token: req.params.token});
-  res.json(token);  
+  const db = req.db;
+  res.json(await db.getOneToken(req.params.token));  
 });
 tokensRouter.post('/save', async function(req,res){
-  const Token = req.datos.Token;
+  const db = req.db;
   const token = req.body.token;
-  const myToken = new Token({token});
-  await myToken.save();  
-  res.json(myToken);
+  res.json(await db.saveToken(token));
 });
 
 export default tokensRouter;

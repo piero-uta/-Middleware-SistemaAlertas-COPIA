@@ -1,14 +1,13 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-import mongoose from "mongoose";
 import express from "express";
 import cors from "cors";
 import usersRoute from './routes/users.route.js';
 import alertsRouter from './routes/alerts.route.js';
 import tokensRouter from './routes/tokens.route.js';
-import dbReplicacion from './dbReplicacion.js';
+import DbReplicacion from './DbReplicacion.js';
 
-const db = new dbReplicacion();
+var db = new DbReplicacion();
 
 const app = express();
 app.use(cors());
@@ -17,17 +16,17 @@ app.use(express.json());
 
 
 app.use((req, res, next)=>{
-  req.datos = db.models;
+  req.db = db;
   next();
 },usersRoute);
 
 app.use((req, res, next)=>{
-  req.datos = db.models; 
+  req.db = db; 
   next();
 },tokensRouter);
 
 app.use((req, res, next)=>{
-  req.datos = db.models; 
+  req.db = db; 
   next();
 },alertsRouter);
 

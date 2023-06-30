@@ -4,34 +4,28 @@ import mongoose from 'mongoose';
 const usersRoute = express.Router();
 
 usersRoute.get('/', async function(req,res){
-  const User = req.datos.User;
-  const users = await User.find({}).select('-password');
-  res.json(users);
+  const db = req.db;
+  res.json(await db.getUsers());
 });
 usersRoute.post('/one/byUsername', async function(req,res){
-  const User = req.datos.User;
+  const db = req.db;
   const username = req.body.username;
-  const user = await User.findOne({username: username});
-  res.json(user);
+  res.json(await db.getOneUserByUsername(username));
 });
 usersRoute.post('/one/', async function(req,res){
-  const User = req.datos.User;
+  const db = req.db;
   const id = new mongoose.Types.ObjectId(req.body.id);
-  const user = await User.findOne({_id: id}).select('-password');
-  res.json(user);
+  res.json(await db.getOneUser(id));
 });
 usersRoute.post('/byId/', async function(req,res){
   const id = req.body.id;
-  const User = req.datos.User;
-  const user = await User.findById(id).select('-password');
-  res.json(user);
+  const db = req.db;
+  res.json(await db.getOneUserById(id));
 });
 usersRoute.post('/save', async function(req,res){
-  const User = req.datos.User;
+  const db = req.db;
   const {username, name, address, password} = req.body;
-  const user = await User({username, name, address, password});
-  user.save();
-  res.json(user);
+  res.json(await db.saveUser(username, name, address, password));
 });
 
 export default usersRoute;

@@ -7,8 +7,5 @@ const alertSchema = new mongoose.Schema({
   },
   date: Date
 }
-
 );
-
-
 export default alertSchema;
