@@ -2,9 +2,9 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import express from "express";
 import cors from "cors";
-import usersRoute from './routes/users.route.js';
-import alertsRouter from './routes/alerts.route.js';
-import tokensRouter from './routes/tokens.route.js';
+import usersRoute from './useCases/userCases/users.route.js';
+import alertsRouter from './useCases/alertCases/alerts.route.js';
+import tokensRouter from './useCases/tokenCases/tokens.route.js';
 import DbReplicacion from './DbReplicacion.js';
 
 var db = new DbReplicacion();

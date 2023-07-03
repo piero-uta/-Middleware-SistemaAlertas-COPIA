@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import cron from 'node-cron';
 import getDateChile from './utils/getDateChile.js';
 import * as dotenv from 'dotenv';
-import userSchema from './schemas/User.schema.js';
-import tokenSchema from './schemas/Token.schema.js';
-import alertSchema from './schemas/Alert.schema.js';
+import userSchema from './useCases/userCases/User.schema.js';
+import tokenSchema from './useCases/tokenCases/Token.schema.js';
+import alertSchema from './useCases/alertCases/Alert.schema.js';
 
 
 dotenv.config();
@@ -90,75 +90,6 @@ class DbReplicacion {
   }
   setSecundariaReady(value){
     this.secundariaReady = value;
-  }
-  async getAlertsWithSenders(){
-    const alerts = await this.Alert.aggregate([
-      {
-        $lookup: 
-        {
-          from: "users",
-          localField: "sender",
-          foreignField: "_id",
-          as: "alertAndSender"
-        }
-      },
-      {$unwind: "$alertAndSender"}
-  
-    ])  
-    //ultimas 20
-    .sort({date: -1}).limit(20);
-    
-    const alertsModificated = alerts.map(alert=>{
-      return {
-        _id: alert._id,
-        name: alert.alertAndSender.name,
-        address: alert.alertAndSender.address,
-        date: alert.date
-      }
-    });
-    return alertsModificated;
-  }  
-  async saveAlertWithSender(senderId){
-    const alert = new this.Alert({
-      sender: new mongoose.Types.ObjectId(senderId),
-      date: getDateChile()
-    });
-    await alert.save();
-    return alert;
-  }
-  async getTokens(){
-    const tokens = await this.Token.find({});
-    return tokens;
-  }
-  async getOneToken(token){
-    const result = await this.Token.findOne({token: token});
-    return result;
-  }
-  async saveToken(token){
-    const myToken = new this.Token({token});
-    await myToken.save();  
-    return myToken
-  }
-  async getUsers(){
-    const users = await this.User.find({}).select('-password');
-    return users;
-  }
-  async getOneUserByUsername(username){
-    const user = await this.User.findOne({username: username});
-    return user;
-  }
-  async getOneUser(id){
-    const user = await this.User.findOne({_id: id}).select('-password');  
-    return user;
-  }
-  async getOneUserById(id){
-    const user = await this.User.findById(id).select('-password');
-    return user;
-  }
-  async saveUser(username, name, address, password){
-    const user = await this.User({username, name, address, password});
-    await user.save();
-    return user
   }
 }
 export default DbReplicacion;
