@@ -1,40 +1,22 @@
-import mongoose from "mongoose";
 import cron from 'node-cron';
-import getDateChile from './utils/getDateChile.js';
-import * as dotenv from 'dotenv';
-import userSchema from './useCases/userCases/User.schema.js';
-import tokenSchema from './useCases/tokenCases/Token.schema.js';
-import alertSchema from './useCases/alertCases/Alert.schema.js';
-
-
-dotenv.config();
-
-var primaria
-var secundaria
-try {
-  primaria = await mongoose.createConnection(process.env.MONGODB, { useNewUrlParser: true }).asPromise();
-} catch (err) {
-  console.error("Error en la conexión a la base de datos primaria:", err);
-}
-try {
-  secundaria = await mongoose.createConnection(process.env.MONGODB2, { useNewUrlParser: true }).asPromise();
-} catch (err) {
-  console.error("Error en la conexión a la base de datos secundaria:", err);
-  // secundaria = primaria;
-}    
+import getDateChile from '../utils/getDateChile.js';
+import userSchema from '../useCases/userCases/User.schema.js';
+import tokenSchema from '../useCases/tokenCases/Token.schema.js';
+import alertSchema from '../useCases/alertCases/Alert.schema.js';
+import { primaria, secundaria } from "./dbConn.js";
 
 var userPrimaria = primaria.model('User',userSchema);
 var tokenPrimaria = primaria.model('Token', tokenSchema);
-var alertPrimaria = primaria.model('Alert', alertSchema);        
+var alertPrimaria = primaria.model('Alert', alertSchema);
+
+
 var userSecundaria = secundaria.model('User',userSchema);
 var tokenSecundaria = secundaria.model('Token', tokenSchema);
 var alertSecundaria = secundaria.model('Alert', alertSchema);        
 
-
-class DbReplicacion {
+//conmutador
+class dbConmutador {
   constructor(){
-
-
     this.primaria = primaria;
     this.secundaria = secundaria;
     this.User = userPrimaria;
@@ -92,4 +74,4 @@ class DbReplicacion {
     this.secundariaReady = value;
   }
 }
-export default DbReplicacion;
+export default dbConmutador;

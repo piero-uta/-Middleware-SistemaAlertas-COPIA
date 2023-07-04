@@ -5,9 +5,9 @@ import cors from "cors";
 import usersRoute from './useCases/userCases/users.route.js';
 import alertsRouter from './useCases/alertCases/alerts.route.js';
 import tokensRouter from './useCases/tokenCases/tokens.route.js';
-import DbReplicacion from './DbReplicacion.js';
+import dbConmutador from './database/dbConmutador.js';
 
-var db = new DbReplicacion();
+var db = new dbConmutador();
 
 const app = express();
 app.use(cors());
