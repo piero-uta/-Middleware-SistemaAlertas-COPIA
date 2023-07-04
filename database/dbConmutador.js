@@ -1,77 +1,58 @@
 import cron from 'node-cron';
-import getDateChile from '../utils/getDateChile.js';
-import userSchema from '../useCases/userCases/User.schema.js';
-import tokenSchema from '../useCases/tokenCases/Token.schema.js';
-import alertSchema from '../useCases/alertCases/Alert.schema.js';
-import { primaria, secundaria } from "./dbConn.js";
+import {dbMap, conns, userModels, tokenModels, alertModels, getDateChile, copyUsersModelAtoModelB, copyTokensModelAtoModelB, copyAlertsModelAtoModelB} from './dbModules.js';
+import dbData from './dbData.js';
 
-var userPrimaria = primaria.model('User',userSchema);
-var tokenPrimaria = primaria.model('Token', tokenSchema);
-var alertPrimaria = primaria.model('Alert', alertSchema);
-
-
-var userSecundaria = secundaria.model('User',userSchema);
-var tokenSecundaria = secundaria.model('Token', tokenSchema);
-var alertSecundaria = secundaria.model('Alert', alertSchema);        
-
-//conmutador
 class dbConmutador {
   constructor(){
-    this.primaria = primaria;
-    this.secundaria = secundaria;
-    this.User = userPrimaria;
-    this.Token = tokenPrimaria;
-    this.Alert = alertPrimaria;
-    this.primariaReady = true;
-    this.secundariaReady = true;
+    this.data = dbData;
     this.inicializar();
   }
   inicializar(){
-
-    this.primaria.on('connected', () => {this.usePrimaria();});
-    this.primaria.on('disconnected', () => {this.useSecundaria();});
-    this.secundaria.on('connected', () => {this.secundariaReady = true;});
-    this.secundaria.on('disconnected', () => {this.secundariaReady = false; if (!this.primariaReady) {throw new Error('Any Database connected',getDateChile());}});
-    
+    this.data.primaria.on('connected', () => {this.usePrimaria();});
+    this.data.primaria.on('disconnected', () => {this.useSecundaria();});
+    this.data.secundaria.on('connected', () => {this.data.secundariaReady = true;});
+    this.data.secundaria.on('disconnected', () => {this.data.secundariaReady = false; if (!this.data.primariaReady) {
+      throw new Error('Any Database connected',getDateChile());}
+    });  
     cron.schedule('00 * * * * *',()=>{
-      if (this.primariaReady && this.secundariaReady){
-        // Promise.all([UserSecundaria.deleteMany({}),TokenSecundaria.deleteMany({}),AlertSecundaria.deleteMany({})])
-        // Promise.all([copyUsersModelAtoModelB(UserPrimaria,UserSecundaria),copyTokensModelAtoModelB(TokenPrimaria,TokenSecundaria)],copyAlertsModelAtoModelB(AlertPrimaria,AlertSecundaria));
+      if (this.data.primariaReady && this.data.secundariaReady){
+        Promise.all([userModels[dbMap.secundaria].deleteMany({}),tokenModels[dbMap.secundaria].deleteMany({}),alertModels[dbMap.secundaria].deleteMany({})])
+        Promise.all([copyUsersModelAtoModelB(userModels[dbMap.primaria],userModels[dbMap.secundaria]),copyTokensModelAtoModelB(tokenModels[dbMap.primaria],tokenModels[dbMap.secundaria])],copyAlertsModelAtoModelB(alertModels[dbMap.primaria],alertModels[dbMap.secundaria]));
         console.log('copy primaria to secundaria', getDateChile());
         }
     }, {
       scheduled: true,
       timezone: "America/Santiago"
-    });
+    });  
   }
   usePrimaria(){
-    if (this.secundariaReady){
-      // Promise.all([UserPrimaria.deleteMany({}),TokenPrimaria.deleteMany({}),AlertPrimaria.deleteMany({})])
-      // Promise.all([copyUsersModelAtoModelB(UserSecundaria,UserPrimaria),copyTokensModelAtoModelB(TokenSecundaria,TokenPrimaria),copyAlertsModelAtoModelB(TokenSecundaria,TokenPrimaria)])
+    if (this.data.secundariaReady){
+      Promise.all([userModels[dbMap.primaria].deleteMany({}),tokenModels[dbMap.primaria].deleteMany({}),alertModels[dbMap.primaria].deleteMany({})])
+      Promise.all([copyUsersModelAtoModelB(userModels[dbMap.secundaria],userModels[dbMap.primaria]),copyTokensModelAtoModelB(tokenModels[dbMap.secundaria],tokenModels[dbMap.primaria]),copyAlertsModelAtoModelB(alertModels[dbMap.secundaria],alertModels[dbMap.primaria])])
       console.log("copy secundaria to primaria",getDateChile());
     }
     console.log('use primaria', getDateChile());
-    this.User = userPrimaria;
-    this.Token = tokenPrimaria;
-    this.Alert = alertPrimaria;
-    this.primariaReady = true;  
+    this.data.User = userModels[dbMap.primaria];
+    this.data.Token = tokenModels[dbMap.primaria];
+    this.data.Alert = alertModels[dbMap.primaria];
+    
+    this.data.primariaReady = true;      
   }
-  useSecundaria(){  
-    if(!this.secundariaReady){
+  useSecundaria(){
+    if(!this.data.secundariaReady){
       throw new Error('Any Database connected', getDateChile());
     }else{
       console.log('use secundaria', getDateChile());
-      this.User = userSecundaria;
-      this.Token = tokenSecundaria;
-      this.Alert = alertSecundaria;  
+  
+      this.data.User = userModels[dbMap.secundaria];
+      this.data.Token = tokenModels[dbMap.secundaria];
+      this.data.Alert = alertModels[dbMap.secundaria];
+  
     }
-    this.primariaReady = false;
+    this.data.primariaReady = false;  
   }
-  setPrimariaReady(value){
-    this.primariaReady = value;
-  }
-  setSecundariaReady(value){
-    this.secundariaReady = value;
-  }
+  get User(){return this.data.User;}
+  get Token(){return this.data.Token;}
+  get Alert(){return this.data.Alert;}
 }
 export default dbConmutador;
