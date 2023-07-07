@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import getDateChile from "../../../utils/getDateChile.js";
 import saveOne from "../../../repositories/saveOne/saveOne.js";
 
-const moment = require('moment-timezone');
+// const moment = require('moment-timezone');
+import moment from 'moment-timezone';
 const dateChile = moment.tz(Date.now(), "America/Santiago");
 
 
