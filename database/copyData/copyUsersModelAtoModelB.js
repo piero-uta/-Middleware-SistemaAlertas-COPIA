@@ -1,3 +1,4 @@
+// Se copian los registros de las usuarios de la base de datos A a la base de datos B
 const copyUsersModelAtoModelB = async (ModelA, ModelB) => {
   const users = await ModelA.find({});
   await Promise.all(

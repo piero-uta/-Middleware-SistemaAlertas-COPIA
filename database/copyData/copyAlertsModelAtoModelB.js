@@ -1,3 +1,4 @@
+// Se copian los registros de las alertas de la base de datos A a la base de datos B
 const copyAlertsModelAtoModelB = async (ModelA, ModelB) => {
   const alerts = await ModelA.find({});
   await Promise.all(

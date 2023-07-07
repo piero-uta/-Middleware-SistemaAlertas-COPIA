@@ -7,14 +7,18 @@ import copyUsersModelAtoModelB from './copyData/copyUsersModelAtoModelB.js'
 import copyTokensModelAtoModelB from './copyData/copyTokensModelAtoModelB.js';
 import copyAlertsModelAtoModelB from './copyData/copyAlertsModelAtoModelB.js';
 
-
+// Mapa de bases de datos, donde primaria es 0 y secundaria es 1
 const  dbMap  = {
   primaria: 0,
   secundaria: 1
 }
+
+// Se crean los modelos de usuario, token y alerta para ambas bases de datos
 var userModels = []
 var tokenModels = []
 var alertModels = []
+
+// Se agregan los modelos de usuario, token y alerta a los arreglos userModels, tokenModels y alertModels
 conns.forEach(conn => {
   userModels.push(conn.model('User',userSchema));
   tokenModels.push(conn.model('Token', tokenSchema));

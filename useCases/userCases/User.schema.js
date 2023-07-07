@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Se define el esquema del usuario
 const userSchema = mongoose.Schema({
   username: String,
   name: String,
