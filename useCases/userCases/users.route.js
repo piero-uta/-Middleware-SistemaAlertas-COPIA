@@ -3,7 +3,7 @@ import getOneUser from './getOneUser/getOneUser.js'
 import getOneUserById from './getOneUserById/getOneUserById.js';
 import getOneUserByUsername from './getOneUserByUsername/getOneUserByUsername.js';
 import getUsers from './getUsers/getUsers.js';
-import saveUser from './saveUser/saveuser.js';
+import saveUser from './saveUser/saveUser.js';
 
 const usersRoute = express.Router();
 

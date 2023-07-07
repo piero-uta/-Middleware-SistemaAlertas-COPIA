@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { get } from "mongoose";
 import getDateChile from "../../../utils/getDateChile.js";
 import saveOne from "../../../repositories/saveOne/saveOne.js";
 
@@ -10,3 +10,4 @@ const saveAlertWithSender = async (req,res) => {
 }
 
 export default saveAlertWithSender;
+
