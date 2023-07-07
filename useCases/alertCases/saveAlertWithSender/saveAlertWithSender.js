@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { get } from "mongoose";
+import getDateChile from "../../../utils/getDateChile.js";
 import saveOne from "../../../repositories/saveOne/saveOne.js";
-import moment from 'moment-timezone';
 
 const saveAlertWithSender = async (req,res) => {
   const db = req.db;
   const {senderId} = req.body;
-  const alert = await saveOne(db.Alert, {sender: new mongoose.Types.ObjectId(senderId), date: moment.tz(Date.now(), "America/Santiago")})
+  const alert = await saveOne(db.Alert, {sender: new mongoose.Types.ObjectId(senderId), date: getDateChile()})
   res.json(alert);
 }
 
